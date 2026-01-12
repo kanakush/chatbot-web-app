@@ -1,0 +1,10 @@
+chatbot_app/
+├── main.py              # Точка входа (запуск бота и web)
+├── database.py          # Работа с SQLite
+├── bot_logic.py         # Логика aiogram
+├── web_app.py           # FastAPI, маршруты и сессии
+├── templates/           # Jinja2 HTML шаблоны
+│   ├── login.html
+│   └── dashboard.html
+├── requirements.txt
+└── Dockerfile

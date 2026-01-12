@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления чат-ботом</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .table-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.05); }
+        .badge-open { background-color: #d1e7dd; color: #0f5132; }
+        .badge-close { background-color: #f8d7da; color: #842029; }
+    </style>
+</head>
+<body class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0">Door_Openbot</h2>
+            <span class="badge bg-secondary">{{ role }}</span>
+            <span class="text-muted ms-2">Пользователь: {{ request.session.user }}</span>
+        </div>
+        <a href="/logout" class="btn btn-outline-danger">Выход</a>
+    </div>
+
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-body">
+            <form class="row g-3" method="get" action="/dashboard">
+                <div class="col-md-2">
+                    <input type="text" name="site_id" class="form-control" placeholder="SITEID" value="{{ filters.site_id or '' }}">
+                </div>
+                <div class="col-md-2">
+                    <select name="status" class="form-select">
+                        <option value="">Все статусы</option>
+                        <option value="open" {% if filters.status == 'open' %}selected{% endif %}>open</option>
+                        <option value="close" {% if filters.status == 'close' %}selected{% endif %}>close</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="date" name="date_from" class="form-control" title="Дата от" value="{{ filters.date_from or '' }}">
+                </div>
+                <div class="col-md-2">
+                    <input type="date" name="date_to" class="form-control" title="Дата до" value="{{ filters.date_to or '' }}">
+                </div>
+                <div class="col-md-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-secondary">Применить</button>
+                    <a href="/dashboard" class="btn btn-light border">Сброс</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if role == 'admin' %}
+    <div class="mb-3 d-flex gap-2">
+        <a href="/export" class="btn btn-sm btn-outline-success">Скачать CSV</a>
+        <a href="/export-excel" class="btn btn-sm btn-outline-success">Скачать Excel</a>
+    </div>
+    {% endif %}
+
+    <div class="table-container">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>SITEID</th>
+                    <th>Фамилия</th>
+                    <th>Телефон</th>
+                    <th>Статус</th>
+                    <th>Дата / Время</th>
+                    {% if role == 'admin' %}<th class="text-end">Действия</th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td><strong>{{ row[1] }}</strong></td>
+                    <td>{{ row[2] }}</td>
+                    <td><code>{{ row[3] }}</code></td>
+                    <td>
+                        <span class="badge {{ 'badge-open' if row[4] == 'open' else 'badge-close' }}">
+                            {{ row[4] }}
+                        </span>
+                    </td>
+                    <td><small>{{ row[5] }}<br>{{ row[6] }}</small></td>
+
+                    {% if role == 'admin' %}
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ row[0] }}">✏️</button>
+                        <a href="/delete/{{ row[0] }}" class="btn btn-sm btn-danger" onclick="return confirm('Вы уверены, что хотите удалить запись?')">🗑️</a>
+                    </td>
+                    {% endif %}
+                </tr>
+
+                {% if role == 'admin' %}
+                <div class="modal fade" id="editModal{{ row[0] }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <form action="/edit/{{ row[0] }}" method="post" class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Редактирование записи #{{ row[0] }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label">SITEID</label>
+                                    <input type="text" name="site_id" class="form-control" value="{{ row[1] }}" required pattern="\d{5}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Фамилия</label>
+                                    <input type="text" name="surname" class="form-control" value="{{ row[2] }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Телефон</label>
+                                    <input type="text" name="phone" class="form-control" value="{{ row[3] }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Статус</label>
+                                    <select name="status" class="form-select">
+                                        <option value="open" {% if row[4] == 'open' %}selected{% endif %}>open</option>
+                                        <option value="close" {% if row[4] == 'close' %}selected{% endif %}>close</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if not rows %}
+        <div class="text-center py-4 text-muted">Записей не найдено</div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
