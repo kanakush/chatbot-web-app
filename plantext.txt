@@ -1,9 +1,10 @@
 chatbot-web-app/
-├── main.py              # Точка входа (запуск бота и web)
-├── database.py          # Работа с SQLite
-├── docker-compose.yml   # yml
-├── templates/           # Jinja2 HTML шаблоны
-│   ├── login.html
-│   └── dashboard.html
-├── requirements.txt
-└── Dockerfile
+├── main.py              # Entry point (runs FastAPI + Aiogram via asyncio.gather)
+├── database.py          # Async DB initialization, indexing, and CRUD methods
+├── templates/           # Jinja2 HTML templates
+│   ├── login.html       # Authorization page
+│   └── dashboard.html   # Main management panel
+├── data.db              # SQLite database file (mounted via Docker Volume)
+├── .env                 # Environment variables (Bot token, Secret key)
+├── Dockerfile           # Docker image configuration
+└── docker-compose.yml   # Container orchestration

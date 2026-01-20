@@ -8,4 +8,4 @@ services:
     env_file:
       - .env
     volumes:
-      - ./db_data:/app/data.db  # Чтобы база не удалилась при перезапуске контейнера
+      - ./data.db:/chatbot-web-app/data.db  # Монтируем конкретный файл базы

@@ -1,14 +1,15 @@
-🤖 Chatbot System with Flask Admin Panel
-A comprehensive system featuring an Aiogram-based Telegram bot for lead generation and a Flask-based dashboard for data management.
+🤖 Door_Openbot & Monitoring Dashboard
+A comprehensive system for request collection and monitoring. It features a high-performance Telegram bot built with Aiogram 3 and a robust web administration panel powered by FastAPI.
 
-📋 Features
-Automated Interaction: Handles user requests via Telegram.
+🌟 Key Features
+📱 Telegram Bot
+Automated Data Collection: Streamlined user polling for SITEID, Surname, and Phone number.
 
-Data Persistence: Uses SQLite for lightweight and fast data storage.
+Input Validation: Strict RegEx validation for SITEID (5 digits) and phone formats (+7/8).
 
-Admin Interface: Responsive web dashboard to monitor bot activity.
+Status Updates: Quick "open"/"close" status reporting via Reply Keyboards.
 
-Containerization: Fully dockerized environment for seamless deployment.
+Asynchronous Engine: Built on aiosqlite for non-blocking database operations.
 
 ### 📸 screenshots
 
@@ -18,11 +19,31 @@ Containerization: Fully dockerized environment for seamless deployment.
 #### Admin Panel
 ![Admin Panel Demo](screenshots/admin_panel.png)
 
-🏗 Project Structure
-main.py — Telegram bot logic.
+💻 Web Admin Dashboard
+Authentication: Secure session-based login with role-based access control (RBAC).
 
-database.py — Database models and interactions.
+Role Model:
 
-templates/ — HTML files for the admin dashboard.
+admin: Full access — view, edit, delete records, and export data.
 
-Dockerfile & docker-compose.yml — Deployment configuration.
+user: Restricted access — can only view records matching their own surname.
+
+Advanced Filtering: Search and sort by SITEID, status, and date ranges.
+
+Data Export: Instant download of the entire database in CSV and Excel (.xlsx) formats.
+
+🛠 Tech Stack
+Backend: Python 3.12, FastAPI, Uvicorn.
+
+Telegram: Aiogram 3.x.
+
+Database: SQLite (via aiosqlite).
+
+Data Processing: Pandas, Openpyxl (for Excel generation).
+
+Frontend: Jinja2 Templates, HTML/CSS.
+
+Deployment: Docker & Docker Compose.
+
+
+
