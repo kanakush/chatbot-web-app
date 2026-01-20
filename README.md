@@ -10,6 +10,14 @@ Admin Interface: Responsive web dashboard to monitor bot activity.
 
 Containerization: Fully dockerized environment for seamless deployment.
 
+### 📸 screenshots
+
+#### Telegram Bot
+![Telegram Bot Demo](screenshots/bot_demo.png)
+
+#### Admin Panel
+![Admin Panel Demo](screenshots/admin_panel.png)
+
 🏗 Project Structure
 main.py — Telegram bot logic.
 
