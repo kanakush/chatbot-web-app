@@ -1,8 +1,7 @@
-chatbot_app/
+chatbot-web-app/
 ├── main.py              # Точка входа (запуск бота и web)
 ├── database.py          # Работа с SQLite
-├── bot_logic.py         # Логика aiogram
-├── web_app.py           # FastAPI, маршруты и сессии
+├── docker-compose.yml   # yml
 ├── templates/           # Jinja2 HTML шаблоны
 │   ├── login.html
 │   └── dashboard.html

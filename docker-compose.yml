@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    container_name: chatbot_system
+    restart: always
+    ports:
+      - "80:8000"  # Веб-панель будет доступна на 80 порту (просто по IP сервера)
+    env_file:
+      - .env
+    volumes:
+      - ./db_data:/app/data.db  # Чтобы база не удалилась при перезапуске контейнера
