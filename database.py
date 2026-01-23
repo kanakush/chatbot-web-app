@@ -1,8 +1,22 @@
 import aiosqlite
 from datetime import datetime
+from passlib.context import CryptContext
+
+# Настройка контекста шифрования
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 DB_PATH = "data.db"
 
+# Вспомогательная функция для создания хеша
+def get_password_hash(password: str) -> str:
+    # Кодируем в байты, обрезаем и только потом хешируем
+    password_bytes = password.encode('utf-8')
+    return pwd_context.hash(password_bytes[:72])
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    # То же самое при проверке
+    password_bytes = plain_password.encode('utf-8')
+    return pwd_context.verify(password_bytes[:72], hashed_password)
 
 async def init_db():
     async with aiosqlite.connect(DB_PATH) as db:
@@ -20,14 +34,9 @@ async def init_db():
             )
         ''')
 
-        # 2. Создание ИНДЕКСОВ для ускорения поиска
-        # Индекс на site_id (частый фильтр)
+        # 2. Создание ИНДЕКСОВ
         await db.execute("CREATE INDEX IF NOT EXISTS idx_site_id ON requests(site_id)")
-
-        # Индекс на фамилию (поиск юзеров)
         await db.execute("CREATE INDEX IF NOT EXISTS idx_surname ON requests(surname)")
-
-        # Составной индекс для фильтрации по датам и статусу одновременно
         await db.execute("CREATE INDEX IF NOT EXISTS idx_date_status ON requests(date, status)")
 
         # 3. Таблица пользователей для Web
@@ -40,16 +49,28 @@ async def init_db():
             )
         ''')
 
-        # Дефолтные пользователи
+        # Дефолтные пользователи с ХЕШИРОВАННЫМИ паролями
+        # ВАЖНО: Мы заменяем "admin" на результат работы get_password_hash
+        admin_hash = get_password_hash("scuitadmin")
+        user_hash = get_password_hash("scuituser")
+
         try:
-            await db.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-                             ("admin", "admin", "admin"))
-            await db.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", ("user", "user", "user"))
+            await db.execute(
+                "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+                ("admin", admin_hash, "admin")
+            )
+            await db.execute(
+                "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+                ("user", user_hash, "user")
+            )
+
+
         except aiosqlite.IntegrityError:
-            pass  # Пользователи уже существуют
+            # Если пользователи уже есть, но вы хотите обновить им пароли на хешированные,
+            # можно выполнить UPDATE, либо вручную удалить файл data.db для полной пересоздания
+            pass
 
         await db.commit()
-
 
 async def add_request(site_id, surname, phone, status, user_id):
     now = datetime.now()

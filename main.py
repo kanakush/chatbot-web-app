@@ -18,7 +18,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command, StateFilter
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from database import init_db, add_request, DB_PATH
+from database import init_db, add_request, DB_PATH, verify_password
 
 import os
 from dotenv import load_dotenv
@@ -104,19 +104,25 @@ async def login_page(request: Request):
 @app.post("/login")
 async def login(request: Request, username: str = Form(...), password: str = Form(...)):
     async with aiosqlite.connect(DB_PATH) as db:
-        cursor = await db.execute("SELECT role FROM users WHERE username=? AND password=?", (username, password))
-        user = await cursor.fetchone()
-        if user:
-            request.session["user"] = username
-            request.session["role"] = user[0]
-            return RedirectResponse(url="/dashboard", status_code=303)
-    return templates.TemplateResponse("login.html", {"request": request, "error": "Неверные данные"})
+        # 1. Достаем пароль (хеш) и роль только по username
+        cursor = await db.execute("SELECT password, role FROM users WHERE username=?", (username,))
+        user_data = await cursor.fetchone()
 
+        if user_data:
+            hashed_password = user_data[0]
+            role = user_data[1]
 
-@app.get("/logout")
-async def logout(request: Request):
-    request.session.clear()
-    return RedirectResponse(url="/")
+            # 2. ПРОВЕРКА: сравниваем введенный пароль с тем, что в базе
+            if verify_password(password, hashed_password):
+                request.session["user"] = username
+                request.session["role"] = role
+                return RedirectResponse(url="/dashboard", status_code=303)
+
+    # Если юзер не найден или пароль не совпал
+    return templates.TemplateResponse("login.html", {
+        "request": request,
+        "error": "Неверное имя пользователя или пароль"
+    })
 
 
 @app.get("/dashboard", response_class=HTMLResponse)
@@ -161,14 +167,26 @@ async def dashboard(request: Request, site_id: str = None, status: str = None, d
 
 
 @app.post("/edit/{entry_id}")
-async def edit_entry(entry_id: int, request: Request, site_id: str = Form(...), surname: str = Form(...),
-                     phone: str = Form(...), status: str = Form(...)):
-    if request.session.get("role") != "admin": raise HTTPException(status_code=403)
+async def edit_entry(
+        entry_id: int,
+        request: Request,
+        site_id: str = Form(...),
+        surname: str = Form(...),
+        phone: str = Form(...),
+        status: str = Form(...)
+):
+    # Проверка прав (только админ)
+    if request.session.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Недостаточно прав")
 
     async with aiosqlite.connect(DB_PATH) as db:
-        await db.execute("UPDATE requests SET site_id=?, surname=?, phone=?, status=? WHERE id=?",
-                         (site_id, surname, phone, status, entry_id))
+        await db.execute(
+            "UPDATE requests SET site_id=?, surname=?, phone=?, status=? WHERE id=?",
+            (site_id, surname, phone, status, entry_id)
+        )
         await db.commit()
+
+    # Возвращаемся на главную панель после сохранения
     return RedirectResponse(url="/dashboard", status_code=303)
 
 
@@ -181,6 +199,10 @@ async def delete_entry(entry_id: int, request: Request):
         await db.commit()
     return RedirectResponse(url="/dashboard", status_code=303)
 
+@app.get("/logout")
+async def logout(request: Request):
+    request.session.clear()  # Очищаем сессию
+    return RedirectResponse(url="/", status_code=303) # 303 нужен для корректного редиректа после GET
 
 @app.get("/export")
 async def export_csv(request: Request):
@@ -219,19 +241,22 @@ async def export_excel(request: Request):
 
 # --- ЗАПУСК ---
 async def main():
-    # Создаем таблицы и индексы
     await init_db()
 
-    # Конфигурация веб-сервера
-    config = uvicorn.Config(app, host="0.0.0.0", port=8000)
+    # Создаем задачу для бота
+    bot_task = asyncio.create_task(dp.start_polling(bot))
+
+    # Настраиваем сервер
+    config = uvicorn.Config(app, host="0.0.0.0", port=8000, log_level="info")
     server = uvicorn.Server(config)
 
-    # Запускаем бота и веб-сервер одновременно
-    print("🚀 Система запущена! Web: http://localhost:8000")
-    await asyncio.gather(
-        dp.start_polling(bot),
-        server.serve()
-    )
+    print("🚀 Система запущена! Web: http://0.0.0.0:8000")
+
+    # Запускаем сервер (он будет блокировать поток, пока не остановите)
+    await server.serve()
+
+    # Если сервер остановлен, отменяем бота
+    bot_task.cancel()
 
 
 if __name__ == "__main__":
