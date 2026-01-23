@@ -17,7 +17,8 @@ Asynchronous Engine: Built on aiosqlite for non-blocking database operations.
 ![Telegram Bot Demo](screenshots/bot_demo.png)
 
 #### Admin Panel
-![Admin Panel Demo](screenshots/admin_panel.png)
+![Admin Panel Demo](screenshots/panel_dark.png)
+![Admin Panel Demo](screenshots/panel_light.png)
 
 💻 Web Admin Dashboard
 Authentication: Secure session-based login with role-based access control (RBAC).
