@@ -44,6 +44,8 @@ Data Processing: Pandas, Openpyxl (for Excel generation).
 
 Frontend: Jinja2 Templates, HTML/CSS.
 
+Security: bcrypt (password hashing), Starlette SessionMiddleware.
+
 Deployment: Docker & Docker Compose.
 
 
