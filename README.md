@@ -113,7 +113,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Create directory for DB
-
 RUN mkdir -p data
 
 EXPOSE 8000
