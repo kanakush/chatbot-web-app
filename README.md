@@ -49,8 +49,6 @@ Frontend: Jinja2 Templates, HTML/CSS.
 
 Security: bcrypt (password hashing), Starlette SessionMiddleware.
 
-Deployment: Docker & Docker Compose.
-
 ​📋 Project Structure
 ├── main.py            
 ├── database.py
@@ -69,60 +67,43 @@ Deployment: Docker & Docker Compose.
 ├── README.md
 ├── Project Structure.txt
 
-🚀 Quick Start
-​1. Manual Setup
+   ​🐳 Deployment with Docker
+​This project is fully containerized. Docker ensures the application runs consistently regardless of the host OS, managing the Telegram Bot, FastAPI Dashboard, and SQLite Database in a single ecosystem.
+​1. Prerequisites
+​Docker and Docker Compose installed.
+​A .env file containing your BOT_TOKEN and SECRET_KEY.
+​2. Configuration Highlights
+​Port Mapping: The internal FastAPI port 8000 is mapped to port 80 on your host. Access the dashboard via http://your-server-ip/ or http://localhost/.
+​Data Persistence: The SQLite database is mounted as a host volume (./data.db). Your data remains safe even if the container is deleted or updated.
+​Restart Policy: Configured to always, ensuring the bot automatically recovers from server reboots or unexpected crashes.
+​🚀 Quick Start
+​The easiest way to deploy the system is using Docker Compose:
 
-Clone the repository:
-1. git clone https://github.com/kanakush/chatbot-web-app.git
-2. cd door-open-bot
+1. Clone the repository:
+git clone https://github.com/kanakush/chatbot-web-app.git
+cd chatbot-web-app
 
-Configure Environment:
+2. Configure Environment:
 Create a .env file in the root directory:
+BOT_TOKEN=your_telegram_bot_token
+SECRET_KEY=your_secure_session_key
 
-pip install -r requirements.txt
+3. Launch:
+docker-compose up -d --build
+The Web Dashboard will be live at http://localhost.
 
-Run the Application:
-python main.py
-
-Docker Deployment (Recommended)
-This project is containerized for easy deployment.
-
-Build the image:
-docker build -t door-bot-system .
-
-Run the container:
-docker run -d -p 8000:8000 --env-file .env --name door-bot-app door-bot-system
+Task Command
+View Logs docker logs -f chatbot_system
+Stop System docker-compose down
+Restart/Apply Changes docker-compose up -d --build
+Check Container Status docker ps
 
 🔒 Security & Best Practices
-Password Hashing: Uses secure verification logic to prevent plain-text credential leaks.
-Session Middleware: Implements encrypted client-side sessions for user tracking.
-Input Sanitization: Regex-based validation for all user inputs in the bot interface.
-Graceful Shutdown: Properly cancels background bot tasks when the server stops.
+Password Hashing: Secure verification logic prevents plain-text credential storage in the database.
+Session Middleware: Encrypted client-side sessions for secure user tracking.
+Input Sanitization: Strict Regex-based validation for all Telegram Bot inputs (Site ID, Phone).
+Graceful Shutdown: The system properly handles signals to cancel background bot tasks and close DB connections cleanly.
 
 📄 License
 This project is licensed under the terms of the GPLv3 License. See the LICENSE file for details.
-Suggested Dockerfile (Save this as Dockerfile in your root):
-
-FROM python:3.10-slim
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-# Create directory for DB
-RUN mkdir -p data
-
-EXPOSE 8000
-
-CMD ["python", "main.py"]
-
-
-
-
-
-
-
 
