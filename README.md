@@ -30,8 +30,10 @@ Advanced Filtering: Search and sort by SITEID, status, and date ranges.
 Data Export: Instant download of the entire database in CSV and Excel (.xlsx) formats.
 
 #### Admin Panel
-![Admin Panel Demo](scree
-nshots/panel_dark.png)
+#Dark
+![Admin Panel Demo](screenshots/panel_dark.png)
+
+#Light
 ![Admin Panel Demo](screenshots/panel_light.png)
 
 🛠 Tech Stack
