@@ -8,3 +8,6 @@ chatbot-web-app/
 ├── .env                 # Environment variables (Bot token, Secret key)
 ├── Dockerfile           # Docker image configuration
 └── docker-compose.yml   # Container orchestration
+└── LICENSE
+└── Project Structure
+└── README.md
