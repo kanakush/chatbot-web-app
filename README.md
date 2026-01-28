@@ -91,7 +91,7 @@ Build the image:
 docker build -t door-bot-system .
 
 Run the container:
-docker run -d -p 8000:8000 --env-file .env --chatbot-system
+docker run -d -p 8000:8000 --env-file .env --name door-bot-app door-bot-system
 
 🔒 Security & Best Practices
 Password Hashing: Uses secure verification logic to prevent plain-text credential leaks.
