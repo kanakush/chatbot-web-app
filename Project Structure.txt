@@ -11,3 +11,4 @@ chatbot-web-app/
 └── LICENSE
 └── Project Structure
 └── README.md
+└── gitignore
