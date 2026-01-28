@@ -15,11 +15,8 @@ Telegram Bot (aiogram 3.x)
 #### Telegram Bot
 ![Telegram Bot Demo](screenshots/bot_demo.png)
 
-#### Admin Panel
-![Admin Panel Demo](screenshots/panel_dark.png)
-![Admin Panel Demo](screenshots/panel_light.png)
-
 💻 Web Admin Dashboard
+
 Authentication: Secure session-based login with role-based access control (RBAC).
 
 Role Model:
@@ -31,6 +28,11 @@ user: Restricted access — can only view records matching their own surname.
 Advanced Filtering: Search and sort by SITEID, status, and date ranges.
 
 Data Export: Instant download of the entire database in CSV and Excel (.xlsx) formats.
+
+#### Admin Panel
+![Admin Panel Demo](scree
+nshots/panel_dark.png)
+![Admin Panel Demo](screenshots/panel_light.png)
 
 🛠 Tech Stack
 Backend: Python 3.12, FastAPI, Uvicorn.
@@ -48,13 +50,21 @@ Security: bcrypt (password hashing), Starlette SessionMiddleware.
 Deployment: Docker & Docker Compose.
 
 ​📋 Project Structure
-├── main.py              # Application Entry Point (Bot + FastAPI)
-├── database.py          # Database Schema & Async CRUD Logic
-├── templates/           # HTML Templates (Login, Dashboard)
-├── .env                 # Environment Variables (Sensitive Data)
-├── requirements.txt     # Dependency List
-├── Dockerfile           # Containerization Configuration
-└── data/                # Database Storage Directory
+├── main.py            
+├── database.py
+├── .gitignore
+├── templates/  
+    └── dashboard.html
+    └── login.html
+├── .env               
+├── requirements.txt     
+├── Dockerfile  
+├── docker compose
+├── data.db   
+├── main.py 
+├── LICENSE
+├── README.md
+├── Project Structure.txt
 
 🚀 Quick Start
 ​1. Manual Setup
