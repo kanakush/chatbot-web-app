@@ -10,17 +10,6 @@ Telegram Bot (aiogram 3.x)
 ​Interactive UI: Custom Reply Keyboards for instant status updates (open/close).
 ​Async Core: Non-blocking database operations using aiosqlite.
 
-​Web Dashboard (FastAPI)
-​Auth System: Role-based access control (admin vs user) with secure session management.
-
-Data Management:
-​user: Can only view their own records (filtered by surname).
-​admin: Full CRUD capabilities (Create, Read, Update, Delete).
-
-​Advanced Filtering: Search by Site ID, Status, and Date Range.
-​Reporting: Export data to CSV and Excel (XLSX) formats using Pandas.
-
-
 ### 📸 screenshots
 
 #### Telegram Bot
