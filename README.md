@@ -53,13 +53,14 @@ Deployment: Docker & Docker Compose.
 ├── main.py            
 ├── database.py
 ├── .gitignore
+├── screenshots/
 ├── templates/  
     └── dashboard.html
     └── login.html
 ├── .env               
 ├── requirements.txt     
 ├── Dockerfile  
-├── docker compose
+├── docker-compose.yml
 ├── data.db   
 ├── main.py 
 ├── LICENSE
