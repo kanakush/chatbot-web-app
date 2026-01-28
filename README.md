@@ -70,8 +70,8 @@ Deployment: Docker & Docker Compose.
 ​1. Manual Setup
 
 Clone the repository:
-git clone https://github.com/kanakush/chatbot-web-app.git
-cd door-open-bot
+1. git clone https://github.com/kanakush/chatbot-web-app.git
+2. cd door-open-bot
 
 Configure Environment:
 Create a .env file in the root directory:
