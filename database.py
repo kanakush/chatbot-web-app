@@ -51,17 +51,17 @@ async def init_db():
 
         # Дефолтные пользователи с ХЕШИРОВАННЫМИ паролями
         # ВАЖНО: Мы заменяем "admin" на результат работы get_password_hash
-        admin_hash = get_password_hash("scuitadmin")
-        user_hash = get_password_hash("scuituser")
+        admin_hash = get_password_hash("pass")
+        user_hash = get_password_hash("pass")
 
         try:
             await db.execute(
                 "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-                ("admin", admin_hash, "admin")
+                ("adm", admin_hash, "adm")
             )
             await db.execute(
                 "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-                ("user", user_hash, "user")
+                ("use", user_hash, "use")
             )
 
 
